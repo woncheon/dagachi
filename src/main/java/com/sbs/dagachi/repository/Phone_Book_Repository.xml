@@ -18,7 +18,10 @@
 		select *
 		from phone_book
 		where phone_book_type=#{phone_book_type}
-		<if test="phone_book_type=='2'">
+		<if test="phone_book_type==2">
+			and phone_book_register=#{phone_book_register}
+		</if>
+		<if test="phone_book_type==3">
 			and phone_book_register=#{phone_book_register}
 		</if>
 		<if test="keyword!=''">
@@ -44,9 +47,28 @@
 	
 	<select id="phoneBookCount" resultType="int">
 		select count(*)
-		from phone_Book
-		where phone_Book_Id is not null
-		<include refid="search"/>
+		from phone_book
+		where phone_book_type=#{phone_book_type}
+		<if test="phone_book_type==2">
+			and phone_book_register=#{phone_book_register}
+		</if>
+		<if test="phone_book_type==3">
+			and phone_book_register=#{phone_book_register}
+		</if>
+		<if test="keyword!=''">
+			<choose>
+				<when test="searchType=='dep'">
+					and phone_book_dep like concat('%',#{keyword},'%')
+				</when>
+				<when test="searchType=='tag'">
+					and phone_book_tag like concat('%',#{keyword},'%')
+				</when>
+				<when test="searchType=='name'">
+					and phone_book_name like concat('%',#{keyword},'%')
+				</when>
+			</choose>
+		</if>
+		order by phone_book_name ASC
 		
 	</select>
 
@@ -59,6 +81,12 @@
 	<select id="getLastInsertId" resultType="int">
 		SELECT LAST_INSERT_ID() 
 	</select>
+	
+	<select id="getTagList" resultType="String">
+		select distinct phone_book_tag
+		from phone_book
+		
+	</select>
 
 	<insert id="registPhone_Book">
 		insert into phone_Book
@@ -70,7 +98,6 @@
 		phone_book_tag=#{phone_Book_Tag},
 		phone_book_fax=#{phone_Book_Fax},
 		phone_book_dep=#{phone_Book_Dep},
-		phone_book_team=#{phone_Book_Team},
 		phone_book_rank=#{phone_Book_Rank},
 		phone_book_address=#{phone_Book_Address},
 		phone_book_web=#{phone_Book_Web},
@@ -90,7 +117,6 @@
 		phone_book_tag=#{phone_Book_Tag},
 		phone_book_fax=#{phone_Book_Fax},
 		phone_book_dep=#{phone_Book_Dep},
-		phone_book_team=#{phone_Book_Team},
 		phone_book_rank=#{phone_Book_Rank},
 		phone_book_address=#{phone_Book_Address},
 		phone_book_web=#{phone_Book_Web},
@@ -104,6 +130,12 @@
 		update phone_Book
 		set phone_Book_Type=3
 		where phone_Book_Id=#{phone_Book_Id}
+	</update>
+	
+	<update id="modifyType">
+		update phone_Book
+		set phone_Book_Type=#{phone_Book_Type}
+		where phone_Book_Id=#{phoneBookId}
 	</update>
 	
 	<delete id="removePhone_Book">

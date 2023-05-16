@@ -16,7 +16,6 @@ public class Phone_BookVO {
 	String phone_Book_Tag;
 	String phone_Book_Fax;
 	String phone_Book_Dep;
-	String phone_Book_Team;
 	String phone_Book_Rank;
 	String phone_Book_Address;
 	String phone_Book_Web;
